@@ -1,12 +1,7 @@
-import _ from 'lodash'
 /* eslint-disable no-unused-vars */
 import path from 'path'
-const DB_HOST = process.env.DB_HOST || 'localhost';
-const DB_PORT = process.env.DB_PORT || 27017;
-const DB = process.env.DB || 'school-db';
-const DB_HOST_TEST = process.env.DB_HOST_TEST || 'localhost';
-const DB_PORT_TEST = process.env.DB_PORT_TEST || 27017;
-const DB_TEST = process.env.DB_TEST || 'school-test-db';
+import _ from 'lodash'
+
 /* istanbul ignore next */
 const requireProcessEnv = (name) => {
   if (!process.env[name]) {
