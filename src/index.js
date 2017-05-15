@@ -1,6 +1,6 @@
 import { GDSDatabase, GDSServer, GDSServices, GDSUtil } from 'gds-config';
 
-import AuthenticationResource from './boundary/';
+import SchoolResource from './boundary/';
 import express from 'express';
 
 const app = express();
@@ -16,7 +16,7 @@ new GDSDatabase().connect((errDB) => {
         new GDSUtil().getLogger(() => {
             app.listen(PORT, () => {
                 global.gdsLogger.logInfo('Express is listening to port ' + PORT);
-                new AuthenticationResource(app);
+                new SchoolResource(app);
             });
         })
     }

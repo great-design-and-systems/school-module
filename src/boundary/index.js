@@ -3,7 +3,6 @@ import {
     GDSDomainPaginateHelper,
 } from 'gds-config';
 import { API as STUDENT_API, StudentsResource } from './student/';
-import { API as USER_API, UsersResource } from './user/';
 
 const protocol = (req) => {
     return req.connection.encrypted ? 'https://' : 'http://'
@@ -11,7 +10,6 @@ const protocol = (req) => {
 
 export default class SchoolResource {
     constructor(app) {
-        new UsersResource(app);
         new StudentsResource(app);
 
         app.get('/', (req, res) => {
