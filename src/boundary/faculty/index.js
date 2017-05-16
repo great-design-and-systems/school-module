@@ -1,28 +1,28 @@
-import { NotFound, CreateStudentResponse } from '../../control/Response';
+import { NotFound, CreateFacultyResponse } from '../../control/Response';
 
-import Students from './Students';
+import Faculties from './Faculties';
 
-export const API = '/api/student/';
+export const API = '/api/faculty/';
 
-export class StudentsResource {
+export class FacultiesResource {
     constructor(app) {
-        const Student = new Students();
-        app.get(API + 'student-profile/:studentId', (req, res) => {
-            Student.getProfileByStudentId(req.params.studentId, (err, result) => {
+        const Faculty = new Faculties();
+        app.get(API + 'faculty-profile/:facultyId', (req, res) => {
+            Faculty.getProfileByFacultyId(req.params.facultyId, (err, result) => {
                 if (err) {
-                    res.status(404).send(NotFound('Student profile'));
+                    res.status(404).send(NotFound('Faculty profile'));
                 } else {
                     res.status(200).send(result);
                 }
             });
         });
         app.post(API + 'create', (req, res) => {
-            Student.create(req.body, (err, result) => {
-                CreateStudentResponse(req, res, err, result);
+            Faculty.create(req.body, (err, result) => {
+                CreateResponse(req, res, err, result);
             });
         });
         app.put(API + 'update/:id', (req, res) => {
-            Student.update(req.params.id, req.body, (err, numberAffected, response) => {
+            Faculty.update(req.params.id, req.body, (err, numberAffected, response) => {
                 if (err) {
                     res.status(500).send(response);
                 } else {
@@ -31,19 +31,19 @@ export class StudentsResource {
                 }
             });
         });
-        app.delete(API + 'delete/:studentId', (req, res) => {
-            Student.removeStudent(req.params.studentId, (err, result) => {
+        app.delete(API + 'delete/:facultyId', (req, res) => {
+            Faculty.removeFaculty(req.params.facultyId, (err, result) => {
                 if (err) {
                     res.status(500).send({
-                        message: 'Failed to remove student id ' + req.params.studentId + '.'
+                        message: 'Failed to remove faculty id ' + req.params.facultyId + '.'
                     });
                 } else {
                     res.status(200).send(result);
                 }
             });
         });
-        app.get(API + 'get-students', (req, res) => {
-            Student.getStudents(req.query, (err, result) => {
+        app.get(API + 'get-faculty', (req, res) => {
+            Faculty.getFaculties(req.query, (err, result) => {
                 if (err) {
                     res.status(500).send(err);
                 } else {
@@ -51,8 +51,8 @@ export class StudentsResource {
                 }
             });
         });
-        app.get(API + 'validate-student-id/:studentId', (req, res) => {
-            Student.validateStudentId(req.params.studentId, (err, result) => {
+        app.get(API + 'validate-faculty-id/:facultyId', (req, res) => {
+            Faculty.validateFacultyId(req.params.facultyId, (err, result) => {
                 if (err) {
                     res.status(500).send(err);
                 } else {

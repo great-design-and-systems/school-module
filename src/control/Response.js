@@ -18,3 +18,16 @@ export const CreateStudentResponse = (req, res, err, result) => {
         res.status(200).send(dto);
     }
 }
+
+export const CreateFacultyResponse = (req, res, err, result) => {
+    if (err) {
+        res.status(500).send(new GDSDomainDTO('FACULTY_CREATION_FAILED', err.message));
+    } else {
+        const dto = new GDSDomainDTO('FACULTY_CREATION_COMPLETED', {
+            id: result._id,
+            facultyId: result.facultyId
+        });
+        dto.addGet('getProfileByFacultyId', 'http://' + req.headers.host + 'api/faculty/' + 'faculty-profile/' + result.facultyId);
+        res.status(200).send(dto);
+    }
+}
