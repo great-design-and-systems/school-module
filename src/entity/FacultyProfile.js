@@ -28,5 +28,5 @@ const facultyProfileSchema = mongoose.Schema({
 facultyProfileSchema.plugin(mongoosePaginate);
 facultyProfileSchema.plugin(uniqueValidator);
 
-const Faculty = mongoose.model('FacultyProfile', FacultyProfileSchema);
+const Faculty = mongoose.model('FacultyProfile', facultyProfileSchema);
 export default Faculty;
