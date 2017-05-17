@@ -1,9 +1,9 @@
-import CreateStudentProfile from '../../control/student/create-student-profile';
-import UpdateStudentProfile from '../../control/student/update-student-profile';
-import GetStudentProfileByStudentId from '../../control/student/get-student-profile-by-student-id';
-import DeleteStudentProfileByStudentId from '../../control/student/delete-student-profile-by-student-id';
-import GetStudents from '../../control/student/get-students';
-import ValidateStudentId from '../../control/student/validate-student-id';
+import CreateStudentProfile from '../../control/student/CreateStudentProfile';
+import UpdateStudentProfile from '../../control/student/UpdateStudentProfile';
+import GetStudentProfileByStudentId from '../../control/student/GetStudentProfileByStudentId';
+import DeleteStudentProfileByStudentId from '../../control/student/DeleteStudentProfileByStudentId';
+import GetStudents from '../../control/student/GetStudents';
+import ValidateStudentId from '../../control/student/ValidateStudentId';
 
 export default class Students {
     getProfileByStudentId(studentId, callback) {
