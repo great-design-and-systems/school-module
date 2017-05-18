@@ -7,7 +7,7 @@ import ValidateStudentId from '../../control/student/ValidateStudentId';
 
 export default class Students {
     getProfileByStudentId(studentId, callback) {
-        new GetStudentProfileByStudentId(studentId, function (err, result) {
+        new GetStudentProfileByStudentId(studentId, (err, result) => {
             if (err) {
                 callback(err);
             } else {

@@ -7,7 +7,7 @@ import ValidateFacultyId from '../../control/faculty/ValidateFacultyId';
 
 export default class Faculties {
     getProfileByFacultyId(facultyId, callback) {
-        new GetFacultyProfileByFacultyId(facultyId, function (err, result) {
+        new GetFacultyProfileByFacultyId(facultyId, (err, result) => {
             if (err) {
                 callback(err);
             } else {
