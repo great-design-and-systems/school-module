@@ -42,7 +42,7 @@ export class FacultiesResource {
                 }
             });
         });
-        app.get(API + 'get-faculty', (req, res) => {
+        app.get(API + 'get-faculties', (req, res) => {
             Faculty.getFaculties(req.query, (err, result) => {
                 if (err) {
                     res.status(500).send(err);
