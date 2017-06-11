@@ -1,6 +1,6 @@
 import { GDSDatabase, GDSServer, GDSServices, GDSUtil } from 'gds-config';
 
-import SchoolResource from './boundary/';
+import { SchoolResource } from './boundary/';
 import express from 'express';
 
 const app = express();
