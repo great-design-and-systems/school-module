@@ -83,10 +83,11 @@ export class SchoolResource {
 export class SchoolResourceChain extends Chain {
     constructor() {
         super('SchoolResourceChain', (context, param, next) => {
-            const domain = param.domain();
+            const domain = param.domain ? param.domain() : [];
             const host = param.host();
             const protocol = param.protocol();
             const dto = new GDSDomainDTO();
+            console.log('SchoolResourceChain', domain);
             dto.setDomainName('School');
             dto.addGet('getProfileByStudentId', protocol + host + STUDENT_API + 'student-profile/:studentId');
             dto.addPost('createStudent', protocol + host + STUDENT_API + 'create');
@@ -142,15 +143,14 @@ export class SchoolResourceChain extends Chain {
             dto.addGet('getCode', protocol + host + SCHOOL_CONFIG_API + 'get-code/:schoolId/:codeType/:codeName');
             dto.addPut('updateCode', protocol + host + SCHOOL_CONFIG_API + 'update-code/:codeId');
             dto.addDelete('deleteCode', protocol + host + SCHOOL_CONFIG_API + 'delete-code/:codeId');
+
             domain.push(dto);
             context.set('domain', domain);
-            context.set('host', host);
-            context.set('protocol', protocol);
             next();
         });
         this.addSpec('host', true);
-        this.addSpec('domain', true);
         this.addSpec('protocol', true);
+        this.addSpec('domain', false);
     }
 }
 

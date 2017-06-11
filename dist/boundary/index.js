@@ -100,10 +100,11 @@ var SchoolResourceChain = exports.SchoolResourceChain = function (_Chain) {
                         _classCallCheck(this, SchoolResourceChain);
 
                         var _this = _possibleConstructorReturn(this, (SchoolResourceChain.__proto__ || Object.getPrototypeOf(SchoolResourceChain)).call(this, 'SchoolResourceChain', function (context, param, next) {
-                                    var domain = param.domain();
+                                    var domain = param.domain ? param.domain() : [];
                                     var host = param.host();
                                     var protocol = param.protocol();
                                     var dto = new _gdsConfig.GDSDomainDTO();
+                                    console.log('SchoolResourceChain', domain);
                                     dto.setDomainName('School');
                                     dto.addGet('getProfileByStudentId', protocol + host + _student.API + 'student-profile/:studentId');
                                     dto.addPost('createStudent', protocol + host + _student.API + 'create');
@@ -159,16 +160,15 @@ var SchoolResourceChain = exports.SchoolResourceChain = function (_Chain) {
                                     dto.addGet('getCode', protocol + host + _schoolConfig.API + 'get-code/:schoolId/:codeType/:codeName');
                                     dto.addPut('updateCode', protocol + host + _schoolConfig.API + 'update-code/:codeId');
                                     dto.addDelete('deleteCode', protocol + host + _schoolConfig.API + 'delete-code/:codeId');
+
                                     domain.push(dto);
                                     context.set('domain', domain);
-                                    context.set('host', host);
-                                    context.set('protocol', protocol);
                                     next();
                         }));
 
                         _this.addSpec('host', true);
-                        _this.addSpec('domain', true);
                         _this.addSpec('protocol', true);
+                        _this.addSpec('domain', false);
                         return _this;
             }
 
