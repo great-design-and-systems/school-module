@@ -7,6 +7,7 @@ import { API as SCHOOL_CONFIG_API, SchoolConfigResource } from './school-config/
 import { API as STUDENT_API, StudentsResource } from './student/';
 
 import { Chain } from 'fluid-chains';
+import { GDSDomainResource } from 'gds-stack';
 
 const protocol = (req) => {
     return req.connection.encrypted ? 'https://' : 'http://'
@@ -14,8 +15,9 @@ const protocol = (req) => {
 
 export class SchoolResource {
     constructor(app) {
+        const resouce = new GDSDomainResource(app, 'api');
         new StudentsResource(app);
-        new FacultiesResource(app);
+        new FacultiesResource(resouce);
         new SchoolConfigResource(app);
 
         app.get('/gds', (req, res) => {

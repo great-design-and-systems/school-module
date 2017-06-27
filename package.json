@@ -13,6 +13,7 @@
     "express": "^4.14.0",
     "fluid-chains": "^0.3.3",
     "gds-config": "latest",
+    "gds-stack": "^0.1.1",
     "jsonfile": "^2.4.0",
     "lodash": "^4.17.4",
     "mocha": "^3.2.0",

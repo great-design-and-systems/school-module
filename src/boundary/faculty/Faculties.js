@@ -1,62 +1,123 @@
+import { CREATE_FACULTY, DELETE_FACULTY, GET_FACULTIES, GET_PROFILE_BY_FACULTY_ID, UPDATE_FACULTY, VALIDATE_FACULTY_ID } from './Chain.info';
+
+import { Chain } from 'fluid-chains';
 import CreateFacultyProfile from '../../control/faculty/CreateFacultyProfile';
-import UpdateFacultyProfile from '../../control/faculty/UpdateFacultyProfile';
-import GetFacultyProfileByFacultyId from '../../control/faculty/GetFacultyProfileByFacultyId';
 import DeleteFacultyProfileByFacultyId from '../../control/faculty/DeleteFacultyProfileByFacultyId';
+import { GDSDomainDTO } from 'gds-stack';
 import GetFaculties from '../../control/faculty/GetFaculties';
+import GetFacultyProfileByFacultyId from '../../control/faculty/GetFacultyProfileByFacultyId';
+import UpdateFacultyProfile from '../../control/faculty/UpdateFacultyProfile';
 import ValidateFacultyId from '../../control/faculty/ValidateFacultyId';
 
-export default class Faculties {
-    getProfileByFacultyId(facultyId, callback) {
-        new GetFacultyProfileByFacultyId(facultyId, (err, result) => {
-            if (err) {
-                callback(err);
-            } else {
-                if (result) {
-                    callback(null, result);
-                } else {
-                    callback(true, null);
-                }
-            }
-        });
-    }
-    create(param, callback) {
-        new CreateFacultyProfile({
-            facultyId: param.facultyId,
-            firstName: param.firstName,
-            middleName: param.middleName,
-            lastName: param.lastName,
-            gender: param.gender,
-            contactNo: param.contactNo,
-            emailAddress: param.emailAddress,
-            department: param.department,
-            imageId: param.imageId
-        }, callback);
-    }
-    update(facultyId, param, callback) {
-        new UpdateFacultyProfile(facultyId, param, callback);
-    }
-    removeFaculty(facultyId, callback) {
-        new DeleteFacultyProfileByFacultyId(facultyId, (err) => {
-            if (!err) {
-                callback(undefined, {
-                    message: 'Faculty has been removed.'
-                });
-            } else {
-                callback(err);
-            }
-        });
-    }
-    getFaculties(queryParam, callback) {
-        console.log(queryParam);
-        new GetFaculties(queryParam, (err, result) => {
-            if (err) {
-                callback({message: 'Failed to get faculty records.'});
-            } else {
-                callback(undefined, result);
-            }
-        });
-    }
-    validateFacultyId(facultyId, callback) {
-        new ValidateFacultyId(facultyId, callback);
-    }
-}
+const getProfileByFacultyIdChain = new Chain(GET_PROFILE_BY_FACULTY_ID, (context, param, next) => {
+    new GetFacultyProfileByFacultyId(param.facultyId(), (err, faculty) => {
+        if (err) {
+            context.set('status', 500);
+            context.set('dto', new GDSDomainDTO('ERROR_' + GET_PROFILE_BY_FACULTY_ID, err));
+            next();
+        } else {
+            context.set('status', 200);
+            context.set('dto', new GDSDomainDTO(GET_PROFILE_BY_FACULTY_ID, faculty));
+            next();
+        }
+    });
+});
+
+getProfileByFacultyIdChain.addSpec('facultyId', true);
+
+const createFacultyChain = new Chain(CREATE_FACULTY, (context, param, next) => {
+    new CreateFacultyProfile({
+        facultyId: param.facultyId(),
+        firstName: param.firstName(),
+        middleName: param.middleName ? param.middleName() : undefined,
+        lastName: param.lastName(),
+        gender: param.gender ? param.gender() : undefined,
+        contactNo: param.contactNo ? param.contactNo() : undefined,
+        emailAddress: param.emailAddress(),
+        department: param.department(),
+        imageId: param.imageId ? param.imageId() : undefined
+    }, (err, faculty) => {
+        if (err) {
+            context.set('status', 500);
+            context.set('dto', new GDSDomainDTO('ERROR_' + CREATE_FACULTY, err));
+            next();
+        } else {
+            context.set('status', 200);
+            context.set('dto', new GDSDomainDTO(CREATE_FACULTY, faculty));
+            next();
+        }
+    });
+});
+createFacultyChain.addSpec('facultyId', true);
+createFacultyChain.addSpec('firstName', true);
+createFacultyChain.addSpec('lastName', true);
+createFacultyChain.addSpec('middleName', false);
+createFacultyChain.addSpec('gender', false);
+createFacultyChain.addSpec('contactNo', false);
+createFacultyChain.addSpec('emailAddress', true);
+createFacultyChain.addSpec('department', true);
+createFacultyChain.addSpec('imageId', false);
+
+const updateFacultyChain = new Chain(UPDATE_FACULTY, (context, param, next) => {
+    new UpdateFacultyProfile(param.facultyId(), param.inputData(), (err, faculty) => {
+        if (err) {
+            context.set('status', 500);
+            context.set('dto', new GDSDomainDTO('ERROR_' + UPDATE_FACULTY, err));
+            next();
+        } else {
+            context.set('status', 200);
+            context.set('dto', new GDSDomainDTO(UPDATE_FACULTY, faculty));
+            next();
+        }
+    });
+});
+
+updateFacultyChain.addSpec('inputData', true);
+updateFacultyChain.addSpec('facultyId', true);
+
+const deleteFacultyChain = new Chain(DELETE_FACULTY, (context, param, next) => {
+    new DeleteFacultyProfileByFacultyId(param.facultyId(), (err) => {
+        if (err) {
+            context.set('status', 500);
+            context.set('dto', new GDSDomainDTO('ERROR_' + DELETE_FACULTY, err));
+            next();
+        } else {
+            context.set('status', 200);
+            context.set('dto', new GDSDomainDTO(DELETE_FACULTY, 'Faculty has been removed.'));
+            next();
+        }
+    });
+});
+deleteFacultyChain.addSpec('faculty', true);
+
+const getFacultiesChain = new Chain(GET_FACULTIES, (context, param, next) => {
+    const query = param.query ? param.query() : {};
+    getFaculties(query, (err, faculties) => {
+        if (err) {
+            context.set('status', 500);
+            context.set('dto', new GDSDomainDTO('ERROR_' + GET_FACULTIES, err));
+            next();
+        } else {
+            context.set('status', 200);
+            context.set('dto', new GDSDomainDTO(GET_FACULTIES, faculties));
+            next();
+        }
+    });
+});
+getFacultiesChain.addSpec('query', false);
+
+
+const validateFacultyIdChain = new Chain(VALIDATE_FACULTY_ID, (context, param, next) => {
+    new ValidateFacultyId(param.facultyId(), (err, result) => {
+        if (err) {
+            context.set('status', 500);
+            context.set('dto', new GDSDomainDTO('ERROR_' + VALIDATE_FACULTY_ID, err));
+            next();
+        } else {
+            context.set('status', 200);
+            context.set('dto', new GDSDomainDTO(VALIDATE_FACULTY_ID, result));
+            next();
+        }
+    });
+});
+validateFacultyIdChain.addSpec('facultyId', true);

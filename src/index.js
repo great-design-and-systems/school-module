@@ -6,8 +6,6 @@ import express from 'express';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-
-
 new GDSDatabase().connect((errDB) => {
     if (errDB) {
         console.error(errDB);
