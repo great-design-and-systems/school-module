@@ -15,7 +15,17 @@ export default class FacultyResource {
 
         resource.post(FacultyChains.CREATE_FACULTY, 'faculty/create', (req, res) => {
             ExecuteChain(FacultyChains.CREATE_FACULTY, {
-                
+                facultyId: req.body.facultyId,
+                firstName: req.body.firstName,
+                middleName: req.body.middleName,
+                lastName: req.body.lastName,
+                gender: req.body.gender,
+                contactNo: req.body.contactNo,
+                emailAddress: req.body.emailAddress,
+                department: req.body.department,
+                imageId: req.body.imageId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             })
         });
     }
@@ -23,11 +33,6 @@ export default class FacultyResource {
 
 export class FacultiesResource {
     constructor(app) {
-        app.post(API + 'create', (req, res) => {
-            Faculty.create(req.body, (err, result) => {
-                CreateResponse(req, res, err, result);
-            });
-        });
         app.put(API + 'update/:id', (req, res) => {
             Faculty.update(req.params.id, req.body, (err, numberAffected, response) => {
                 if (err) {

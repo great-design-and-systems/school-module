@@ -43,7 +43,10 @@ const createFacultyChain = new Chain(CREATE_FACULTY, (context, param, next) => {
             next();
         } else {
             context.set('status', 200);
-            context.set('dto', new GDSDomainDTO(CREATE_FACULTY, faculty));
+            context.set('dto', new GDSDomainDTO(CREATE_FACULTY, {
+                id: faculty._id,
+                facultyId: faculty.facultyId
+            }));
             next();
         }
     });
