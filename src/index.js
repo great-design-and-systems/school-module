@@ -1,26 +1,36 @@
-import { GDSDatabase, GDSServer, GDSServices, GDSUtil } from 'gds-config';
+import { DatabaseChains, Logger, LoggerChains, ServerChains } from 'gds-stack';
+import { FacultyChains, SchoolResource } from './boundary/';
 
-import { SchoolResource } from './boundary/';
-import express from 'express';
+import { ExecuteChain } from 'fluid-chains';
 
-const app = express();
 const PORT = process.env.PORT || 5000;
+const DB = process.env.DB || 'school-module-db';
+const DB_HOST = process.env.DB_HOST || 'localhost';
+const DB_PORT = process.env.DB_PORT || 27017;
+const DB_USER = process.env.DB_USER;
+const DB_PASSWORD = process.env.DB_PASSWORD;
 
-new GDSDatabase().connect((errDB) => {
-    if (errDB) {
-        console.error(errDB);
-    } else {
-        new GDSServer(app);
-        new GDSUtil().getLogger(() => {
-            app.listen(PORT, () => {
-                global.gdsLogger.logInfo('Express is listening to port ' + PORT);
-                new SchoolResource(app);
-            });
-        })
-    }
-});
+ExecuteChain([
+    LoggerChains.LOGGER_CONFIG,
+    DatabaseChains.MONGO_CONFIG,
+    DatabaseChains.MONGO_CONNECT,
+    ServerChains.GDS_SERVER_CONFIG,
+    ServerChains.GDS_SERVER_HTTP_LISTENER], {
+        mongo_databaseName: DB,
+        mongo_host: DB_HOST,
+        mongo_port: DB_PORT,
+        mongo_user: DB_USER,
+        mongo_password: DB_PASSWORD,
+        mongo_retry: 5,
+        logger_name: 'School',
+        logger_filePath: 'school-module.log',
+        server_port: PORT
+    }, (result) => {
+        if (!result.$err) {
+            Logger('School').info(`Server is connected in port ${PORT}`);
+        }
+    });
 
-export default app;
 
 
 

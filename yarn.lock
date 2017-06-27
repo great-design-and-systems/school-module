@@ -1157,14 +1157,6 @@ finalhandler@~1.0.3:
     statuses "~1.3.1"
     unpipe "~1.0.0"
 
-fluid-chains@^0.3.3:
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/fluid-chains/-/fluid-chains-0.3.4.tgz#9c56e9fb844df7a3f167570787298ee828b82f49"
-  dependencies:
-    babel-polyfill "^6.23.0"
-    lodash "^4.17.4"
-    object-sizeof "^1.2.0"
-
 fluid-chains@^0.4.0, fluid-chains@^0.4.2:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/fluid-chains/-/fluid-chains-0.4.2.tgz#27bb2b921c197f8b4fb4b281c93f16dd9089e7f8"
@@ -1305,10 +1297,11 @@ gds-config@latest:
     nodemon "^1.11.0"
     restler "3.4.0"
 
-gds-stack@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/gds-stack/-/gds-stack-0.1.1.tgz#124fe201b47a134f235aecbdd63bac42bacdbee0"
+gds-stack@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/gds-stack/-/gds-stack-0.1.2.tgz#a46e47dc5d776468550259a80927adcbe388ac80"
   dependencies:
+    batchflow "^0.4.0"
     body-parser "^1.17.2"
     configstore "^3.1.0"
     connect-multiparty "^2.0.0"
