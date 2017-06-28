@@ -97,7 +97,7 @@ deleteStudentChain.addSpec('studentId', true);
 
 const getStudentsChain = new Chain(GET_STUDENTS, (context, param, next) => {
     const query = param.query ? param.query() : {};
-    getStudents(query, (err, students) => {
+    new GetStudents(query, (err, students) => {
         if (err) {
             context.set('status', 500);
             context.set('dto', new GDSDomainDTO('ERROR_' + GET_STUDENTS, err));

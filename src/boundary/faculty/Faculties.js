@@ -97,7 +97,7 @@ deleteFacultyChain.addSpec('faculty', true);
 
 const getFacultiesChain = new Chain(GET_FACULTIES, (context, param, next) => {
     const query = param.query ? param.query() : {};
-    getFaculties(query, (err, faculties) => {
+    new GetFaculties(query, (err, faculties) => {
         if (err) {
             context.set('status', 500);
             context.set('dto', new GDSDomainDTO('ERROR_' + GET_FACULTIES, err));
