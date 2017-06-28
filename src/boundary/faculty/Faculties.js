@@ -57,7 +57,9 @@ createFacultyChain.addSpec('lastName', true);
 createFacultyChain.addSpec('middleName', false);
 createFacultyChain.addSpec('gender', false);
 createFacultyChain.addSpec('contactNo', false);
-createFacultyChain.addSpec('emailAddress', true);
+createFacultyChain.addSpec('emailAddress', true, (done) => {
+    // validate email here  done(value:Boolean, message:String)
+});
 createFacultyChain.addSpec('department', true);
 createFacultyChain.addSpec('imageId', false);
 
