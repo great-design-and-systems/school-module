@@ -1,12 +1,12 @@
 'use strict';
 
+var _gdsStack = require('gds-stack');
+
 var _faculty = require('./faculty/');
 
 var _student = require('./student/');
 
-var _gdsStack = require('gds-stack');
-
-var resource = new _gdsStack.GDSDomainResource(_faculty.ExpressApp, 'api');
+var resource = new _gdsStack.GDSDomainResource(_gdsStack.ExpressApp, 'api');
 new _faculty.FacultyResource(resource);
 new _student.StudentResource(resource);
 module.exports = {

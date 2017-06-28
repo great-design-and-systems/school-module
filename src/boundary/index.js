@@ -1,7 +1,6 @@
-import { ExpressApp, FacultyChains, FacultyResource } from './faculty/';
+import { ExpressApp, GDSDomainResource } from 'gds-stack';
+import { FacultyChains, FacultyResource } from './faculty/';
 import { StudentChains, StudentResource } from './student/';
-
-import { GDSDomainResource } from 'gds-stack';
 
 const resource = new GDSDomainResource(ExpressApp, 'api');
 new FacultyResource(resource);
