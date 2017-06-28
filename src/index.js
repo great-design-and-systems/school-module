@@ -28,7 +28,6 @@ ExecuteChain([
     }, (result) => {
         if (!result.$err) {
             Logger('School').info(`Server is connected in port ${PORT}`);
-
             ExpressApp.get('/api', (req, res) => {
                 res.status(200).send(SchoolResource.getDTO(req));
             });

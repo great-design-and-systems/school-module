@@ -1,34 +1,33 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
+var _gdsStack = require('gds-stack');
 
-var _gdsConfig = require('gds-config');
+var _fluidChains = require('fluid-chains');
 
 var _boundary = require('./boundary/');
 
-var _express = require('express');
-
-var _express2 = _interopRequireDefault(_express);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var app = (0, _express2.default)();
 var PORT = process.env.PORT || 5000;
+var DB = process.env.DB || 'school-module-db';
+var DB_HOST = process.env.DB_HOST || 'localhost';
+var DB_PORT = process.env.DB_PORT || 27017;
+var DB_USER = process.env.DB_USER;
+var DB_PASSWORD = process.env.DB_PASSWORD;
 
-new _gdsConfig.GDSDatabase().connect(function (errDB) {
-    if (errDB) {
-        console.error(errDB);
-    } else {
-        new _gdsConfig.GDSServer(app);
-        new _gdsConfig.GDSUtil().getLogger(function () {
-            app.listen(PORT, function () {
-                global.gdsLogger.logInfo('Express is listening to port ' + PORT);
-                new _boundary.SchoolResource(app);
-            });
+(0, _fluidChains.ExecuteChain)([_gdsStack.LoggerChains.LOGGER_CONFIG, _gdsStack.DatabaseChains.MONGO_CONFIG, _gdsStack.DatabaseChains.MONGO_CONNECT, _gdsStack.ServerChains.GDS_SERVER_CONFIG, _gdsStack.ServerChains.GDS_SERVER_HTTP_LISTENER], {
+    mongo_databaseName: DB,
+    mongo_host: DB_HOST,
+    mongo_port: DB_PORT,
+    mongo_user: DB_USER,
+    mongo_password: DB_PASSWORD,
+    mongo_retry: 5,
+    logger_name: 'School',
+    logger_filePath: 'school-module.log',
+    server_port: PORT
+}, function (result) {
+    if (!result.$err) {
+        (0, _gdsStack.Logger)('School').info('Server is connected in port ' + PORT);
+        _gdsStack.ExpressApp.get('/api', function (req, res) {
+            res.status(200).send(_boundary.SchoolResource.getDTO(req));
         });
     }
 });
-
-exports.default = app;
