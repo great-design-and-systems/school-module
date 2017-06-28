@@ -1,7 +1,7 @@
-import { DatabaseChains, Logger, LoggerChains, ServerChains } from 'gds-stack';
-import { FacultyChains, SchoolResource } from './boundary/';
+import { DatabaseChains, ExpressApp, Logger, LoggerChains, ServerChains } from 'gds-stack';
 
 import { ExecuteChain } from 'fluid-chains';
+import { SchoolResource } from './boundary/';
 
 const PORT = process.env.PORT || 5000;
 const DB = process.env.DB || 'school-module-db';
@@ -28,6 +28,10 @@ ExecuteChain([
     }, (result) => {
         if (!result.$err) {
             Logger('School').info(`Server is connected in port ${PORT}`);
+
+            ExpressApp.get('/api', (req, res) => {
+                res.status(200).send(SchoolResource.getDTO(req));
+            });
         }
     });
 
