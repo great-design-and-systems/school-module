@@ -1,3 +1,7 @@
+import * as chains from './Chain.info';
+import { Chain } from 'fluid-chains';
+import { GDSDomainDTO } from 'gds-stack';
+
 import CreateSchoolProfile from '../../control/school-config/CreateSchoolProfile';
 import UpdateSchoolProfile from '../../control/school-config/UpdateSchoolProfile';
 import GetSchoolProfile from '../../control/school-config/GetSchoolProfileBySchoolId';
@@ -33,34 +37,83 @@ import GetCodes from '../../control/school-config/GetCodes';
 import GetCode from '../../control/school-config/GetCode';
 import DeleteCode from '../../control/school-config/DeleteCode';
 
+const createSchoolProfileChain = new Chain(chains.CREATE_SCHOOL_PROFILE, (context, param, next) => {
+	new CreateSchoolProfile({
+		name: param.name(),
+		address: param.address(),
+		createdBy: param.createdBy(),
+		updatedBy: param.updatedBy()
+	}, (err, schoolProfile) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.CREATE_SCHOOL_PROFILE, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.CREATE_SCHOOL_PROFILE, {
+				id: schoolProfile._id,
+				facultyId: schoolProfile.schoolId
+			}));
+			next();
+		}
+	});
+});
+createSchoolProfileChain.addSpec('name', true);
+createSchoolProfileChain.addSpec('address', true);
+createSchoolProfileChain.addSpec('createdBy', true);
+createSchoolProfileChain.addSpec('updatedBy', true);
+
+const updateSchoolProfileChain = new Chain(chains.UPDATE_SCHOOL_PROFILE, (context, param, next) => {
+    new UpdateSchoolProfile(param.schoolId(), param.inputData(), (err, schoolProfile) => {
+        if (err) {
+            context.set('status', 500);
+            context.set('dto', new GDSDomainDTO('ERROR_' + chains.UPDATE_SCHOOL_PROFILE, err));
+            next();
+        } else {
+            context.set('status', 200);
+            context.set('dto', new GDSDomainDTO(chains.UPDATE_SCHOOL_PROFILE, schoolProfile));
+            next();
+        }
+    });
+});
+updateSchoolProfileChain.addSpec('inputData', true);
+updateSchoolProfileChain.addSpec('facultyId', true);
+
+const getProfileBySchoolIdChain = new Chain(chains.GET_SCHOOL_PROFILE, (context, param, next) => {
+    new GetSchoolProfile(param.schoolId(), (err, schoolProfile) => {
+        if (err) {
+            context.set('status', 500);
+            context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_SCHOOL_PROFILE, err));
+            next();
+        } else {
+            context.set('status', 200);
+            context.set('dto', new GDSDomainDTO(chains.GET_SCHOOL_PROFILE, schoolProfile));
+            next();
+        }
+    });
+});
+getProfileBySchoolIdChain.addSpec('schoolId', true);
+
+const deleteSchoolProfileChain = new Chain(chains.DELETE_SCHOOL_PROFILE, (context, param, next) => {
+    new deleteSchoolProfile(param.schoolId(), (err) => {
+        if (err) {
+            context.set('status', 500);
+            context.set('dto', new GDSDomainDTO('ERROR_' + chains.DELETE_SCHOOL_PROFILE, err));
+            next();
+        } else {
+            context.set('status', 200);
+            context.set('dto', new GDSDomainDTO(chains.DELETE_SCHOOL_PROFILE, 'School Profile has been removed.'));
+            next();
+        }
+    });
+});
+deleteSchoolProfileChain.addSpec('schoolId', true);
+
 export default class SchoolConfigs {
-	createSchoolProfile(param, callback) {
-		new CreateSchoolProfile({
-			name: param.name,
-			address: param.address,
-			createdBy: param.createdBy,
-			updatedBy: param.createdBy}, callback);
-    }
-    updateSchoolProfile(schoolId, updateParam, callback) {
-    	updateParam.updatedOn = new Date();
-    	new UpdateSchoolProfile(schoolId, updateParam, callback);
-    }
-    getSchoolProfile(schoolId, callback) {
-        new GetSchoolProfile(schoolId, (err, result) => {
-        	if (err) {
-        		callback(err);
-        	} else {
-        		if (result) {
-        			callback(null, result);
-        		} else {
-        			callback(null, []);
-        		}
-        	}
-        });
-    }
-    deleteSchoolProfile(schoolId, callback) {
-        new DeleteSchoolProfile(schoolId, callback);
-    }
+
+	deleteSchoolProfile(schoolId, callback) {
+		new DeleteSchoolProfile(schoolId, callback);
+	}
 	createSchoolYear(param, callback) {
 		new CreateSchoolYear({
 			description: param.description,
@@ -68,41 +121,42 @@ export default class SchoolConfigs {
 			dateEnd: param.dateEnd,
 			schoolId: param.schoolId,
 			createdBy: param.createdBy,
-			updatedBy: param.createdBy}, callback);
-    }
-    updateSchoolYear(schoolYearId, updateParam, callback) {
-    	updateParam.updatedOn = new Date();
-    	new UpdateSchoolYear(schoolYearId, updateParam, callback);
-    }
-    getSchoolYear(schoolYearId, callback) {
-        new GetSchoolYear(schoolYearId, (err, result) => {
-        	if (err) {
-        		callback(err);
-        	} else {
-        		if (result) {
-        			callback(null, result);
-        		} else {
-        			callback(null, []);
-        		}
-        	}
-        });
-    }
-    getSchoolYears(params, callback) {
-        new GetSchoolYears(params, (err, result) => {
-        	if (err) {
-        		callback(err);
-        	} else {
-        		if (result) {
-        			callback(null, result);
-        		} else {
-        			callback(null, []);
-        		}
-        	}
-        });
-    }
-    deleteSchoolYear(schoolYearId, callback) {
-        new DeleteSchoolYear(schoolYearId, callback);
-    }
+			updatedBy: param.createdBy
+		}, callback);
+	}
+	updateSchoolYear(schoolYearId, updateParam, callback) {
+		updateParam.updatedOn = new Date();
+		new UpdateSchoolYear(schoolYearId, updateParam, callback);
+	}
+	getSchoolYear(schoolYearId, callback) {
+		new GetSchoolYear(schoolYearId, (err, result) => {
+			if (err) {
+				callback(err);
+			} else {
+				if (result) {
+					callback(null, result);
+				} else {
+					callback(null, []);
+				}
+			}
+		});
+	}
+	getSchoolYears(params, callback) {
+		new GetSchoolYears(params, (err, result) => {
+			if (err) {
+				callback(err);
+			} else {
+				if (result) {
+					callback(null, result);
+				} else {
+					callback(null, []);
+				}
+			}
+		});
+	}
+	deleteSchoolYear(schoolYearId, callback) {
+		new DeleteSchoolYear(schoolYearId, callback);
+	}
 	createSchoolSem(param, callback) {
 		new CreateSchoolSem({
 			description: param.description,
@@ -110,205 +164,210 @@ export default class SchoolConfigs {
 			dateEnd: param.dateEnd,
 			schoolYearId: param.schoolYearId,
 			createdBy: param.createdBy,
-			updatedBy: param.createdBy}, callback);
-    }
-    updateSchoolSem(schoolSemId, updateParam, callback) {
-    	updateParam.updatedOn = new Date();
-    	new UpdateSchoolSem(schoolSemId, updateParam, callback);
-    }
-    getSchoolSem(schoolSemId, callback) {
-        new GetSchoolSem(schoolSemId, (err, result) => {
-        	if (err) {
-        		callback(err);
-        	} else {
-        		if (result) {
-        			callback(null, result);
-        		} else {
-        			callback(null, []);
-        		}
-        	}
-        });
-    }
-    getSchoolSems(params, callback) {
-        new GetSchoolSems(params, (err, result) => {
-        	if (err) {
-        		callback(err);
-        	} else {
-        		if (result) {
-        			callback(null, result);
-        		} else {
-        			callback(null, []);
-        		}
-        	}
-        });
-    }
-    deleteSchoolSem(schoolSemId, callback) {
-        new DeleteSchoolSem(schoolSemId, callback);
-    }
+			updatedBy: param.createdBy
+		}, callback);
+	}
+	updateSchoolSem(schoolSemId, updateParam, callback) {
+		updateParam.updatedOn = new Date();
+		new UpdateSchoolSem(schoolSemId, updateParam, callback);
+	}
+	getSchoolSem(schoolSemId, callback) {
+		new GetSchoolSem(schoolSemId, (err, result) => {
+			if (err) {
+				callback(err);
+			} else {
+				if (result) {
+					callback(null, result);
+				} else {
+					callback(null, []);
+				}
+			}
+		});
+	}
+	getSchoolSems(params, callback) {
+		new GetSchoolSems(params, (err, result) => {
+			if (err) {
+				callback(err);
+			} else {
+				if (result) {
+					callback(null, result);
+				} else {
+					callback(null, []);
+				}
+			}
+		});
+	}
+	deleteSchoolSem(schoolSemId, callback) {
+		new DeleteSchoolSem(schoolSemId, callback);
+	}
 	createEducationLevel(param, callback) {
 		new CreateEducationLevel({
 			name: param.name,
 			description: param.description,
 			schoolId: param.schoolId,
 			createdBy: param.createdBy,
-			updatedBy: param.createdBy}, callback);
-    }
-    updateEducationLevel(educationLevelId, updateParam, callback) {
-    	updateParam.updatedOn = new Date();
-    	new UpdateEducationLevel(educationLevelId, updateParam, callback);
-    }
-    getEducationLevel(educationLevelId, callback) {
-        new GetEducationLevel(educationLevelId, (err, result) => {
-        	if (err) {
-        		callback(err);
-        	} else {
-        		if (result) {
-        			callback(null, result);
-        		} else {
-        			callback(null, []);
-        		}
-        	}
-        });
-    }
-    getEducationLevels(params, callback) {
-        new GetEducationLevels(params, (err, result) => {
-        	if (err) {
-        		callback(err);
-        	} else {
-        		if (result) {
-        			callback(null, result);
-        		} else {
-        			callback(null, []);
-        		}
-        	}
-        });
-    }
-    deleteEducationLevel(educationLevelId, callback) {
-        new DeleteEducationLevel(educationLevelId, callback);
-    }
-    createDepartment(param, callback) {
+			updatedBy: param.createdBy
+		}, callback);
+	}
+	updateEducationLevel(educationLevelId, updateParam, callback) {
+		updateParam.updatedOn = new Date();
+		new UpdateEducationLevel(educationLevelId, updateParam, callback);
+	}
+	getEducationLevel(educationLevelId, callback) {
+		new GetEducationLevel(educationLevelId, (err, result) => {
+			if (err) {
+				callback(err);
+			} else {
+				if (result) {
+					callback(null, result);
+				} else {
+					callback(null, []);
+				}
+			}
+		});
+	}
+	getEducationLevels(params, callback) {
+		new GetEducationLevels(params, (err, result) => {
+			if (err) {
+				callback(err);
+			} else {
+				if (result) {
+					callback(null, result);
+				} else {
+					callback(null, []);
+				}
+			}
+		});
+	}
+	deleteEducationLevel(educationLevelId, callback) {
+		new DeleteEducationLevel(educationLevelId, callback);
+	}
+	createDepartment(param, callback) {
 		new CreateDepartment({
 			name: param.name,
 			description: param.description,
 			schoolId: param.schoolId,
 			createdBy: param.createdBy,
-			updatedBy: param.createdBy}, callback);
-    }
-    updateDepartment(departmentId, updateParam, callback) {
-    	updateParam.updatedOn = new Date();
-    	new UpdateDepartment(departmentId, updateParam, callback);
-    }
-    getDepartment(departmentId, callback) {
-        new GetDepartment(departmentId, (err, result) => {
-        	if (err) {
-        		callback(err);
-        	} else {
-        		if (result) {
-        			callback(null, result);
-        		} else {
-        			callback(null, []);
-        		}
-        	}
-        });
-    }
-    getDepartments(params, callback) {
-        new GetDepartments(params, (err, result) => {
-        	if (err) {
-        		callback(err);
-        	} else {
-        		if (result) {
-        			callback(null, result);
-        		} else {
-        			callback(null, []);
-        		}
-        	}
-        });
-    }
-    deleteDepartment(departmentId, callback) {
-        new DeleteDepartment(departmentId, callback);
-    }
-    createTheme(param, callback) {
+			updatedBy: param.createdBy
+		}, callback);
+	}
+	updateDepartment(departmentId, updateParam, callback) {
+		updateParam.updatedOn = new Date();
+		new UpdateDepartment(departmentId, updateParam, callback);
+	}
+	getDepartment(departmentId, callback) {
+		new GetDepartment(departmentId, (err, result) => {
+			if (err) {
+				callback(err);
+			} else {
+				if (result) {
+					callback(null, result);
+				} else {
+					callback(null, []);
+				}
+			}
+		});
+	}
+	getDepartments(params, callback) {
+		new GetDepartments(params, (err, result) => {
+			if (err) {
+				callback(err);
+			} else {
+				if (result) {
+					callback(null, result);
+				} else {
+					callback(null, []);
+				}
+			}
+		});
+	}
+	deleteDepartment(departmentId, callback) {
+		new DeleteDepartment(departmentId, callback);
+	}
+	createTheme(param, callback) {
 		new CreateTheme({
 			templateName: param.templateName,
 			description: param.description,
 			logo: param.logo,
 			schoolId: param.schoolId,
 			createdBy: param.createdBy,
-			updatedBy: param.createdBy}, callback);
-    }
-    updateTheme(themeId, updateParam, callback) {
-    	updateParam.updatedOn = new Date();
-    	new UpdateTheme(themeId, updateParam, callback);
-    }
-    getTheme(themeId, callback) {
-        new GetTheme(themeId, (err, result) => {
-        	if (err) {
-        		callback(err);
-        	} else {
-        		if (result) {
-        			callback(null, result);
-        		} else {
-        			callback(null, []);
-        		}
-        	}
-        });
-    }
-    getThemes(params, callback) {
-        new GetThemes(params, (err, result) => {
-        	if (err) {
-        		callback(err);
-        	} else {
-        		if (result) {
-        			callback(null, result);
-        		} else {
-        			callback(null, []);
-        		}
-        	}
-        });
-    }
-    deleteTheme(themeId, callback) {
-        new DeleteTheme(themeId, callback);
-    }
-    createCode(param, callback) {
+			updatedBy: param.createdBy
+		}, callback);
+	}
+	updateTheme(themeId, updateParam, callback) {
+		updateParam.updatedOn = new Date();
+		new UpdateTheme(themeId, updateParam, callback);
+	}
+	getTheme(themeId, callback) {
+		new GetTheme(themeId, (err, result) => {
+			if (err) {
+				callback(err);
+			} else {
+				if (result) {
+					callback(null, result);
+				} else {
+					callback(null, []);
+				}
+			}
+		});
+	}
+	getThemes(params, callback) {
+		new GetThemes(params, (err, result) => {
+			if (err) {
+				callback(err);
+			} else {
+				if (result) {
+					callback(null, result);
+				} else {
+					callback(null, []);
+				}
+			}
+		});
+	}
+	deleteTheme(themeId, callback) {
+		new DeleteTheme(themeId, callback);
+	}
+	createCode(param, callback) {
 		new CreateCode({
 			codeType: param.codeType,
 			codeName: param.codeName,
 			codeValue: param.codeValue,
 			schoolId: param.schoolId,
 			createdBy: param.createdBy,
-			updatedBy: param.createdBy}, callback);
-    }
-    updateCode(codeId, updateParam, callback) {
-    	updateParam.updatedOn = new Date();
-    	new UpdateCode(codeId, updateParam, callback);
-    }
-    getCodes(params, callback) {
-        new GetCodes(params, (err, result) => {
-        	if (err) {
-        		callback(err);
-        	} else {
-        		if (result) {
-        			callback(null, result);
-        		} else {
-        			callback(null, []);
-        		}
-        	}
-        });
-    }
-    getCode(params, callback) {
-        new GetCode(params, (err, result) => {
-        	if (err) {
-        		callback(err);
-        	} else {
-        		if (result) {
-        			callback(null, result);
-        		} else {
-        			callback(null, []);
-        		}
-        	}
-        });
-    }
-    deleteCode(codeId, callback) {
-        new DeleteCode(codeId, callback);
-    }
+			updatedBy: param.createdBy
+		}, callback);
+	}
+	updateCode(codeId, updateParam, callback) {
+		updateParam.updatedOn = new Date();
+		new UpdateCode(codeId, updateParam, callback);
+	}
+	getCodes(params, callback) {
+		new GetCodes(params, (err, result) => {
+			if (err) {
+				callback(err);
+			} else {
+				if (result) {
+					callback(null, result);
+				} else {
+					callback(null, []);
+				}
+			}
+		});
+	}
+	getCode(params, callback) {
+		new GetCode(params, (err, result) => {
+			if (err) {
+				callback(err);
+			} else {
+				if (result) {
+					callback(null, result);
+				} else {
+					callback(null, []);
+				}
+			}
+		});
+	}
+	deleteCode(codeId, callback) {
+		new DeleteCode(codeId, callback);
+	}
 }

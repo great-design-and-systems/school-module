@@ -1,0 +1,14 @@
+export const CREATE_SCHOOL_PROFILE = 'createSchoolProfile';
+export const GET_SCHOOL_PROFILE = 'getSchoolProfile';
+export const UPDATE_SCHOOL_PROFILE = 'updateSchoolProfile';
+export const DELETE_SCHOOL_PROFILE = 'deleteSchoolProfile';
+export const CREATE_SCHOOL_YEAR = 'createSchoolYear';
+export const GET_SCHOOL_YEAR = 'getSchoolYear';
+export const GET_SCHOOL_YEAR_BY_SCHOOL_ID = 'getSchoolYearBySchoolId';
+export const UPDATE_SCHOOL_YEAR = 'updateSchoolYear';
+export const DELETE_SCHOOL_YEAR = 'deleteSchoolYear';
+export const CREATE_SCHOOL_SEM = 'createSchoolSem';
+export const GET_SCHOOL_SEM = 'getSchoolSem';
+export const GET_SCHOOL_SEM_BY_SCHOOL_YEAR_ID = 'getSchoolSemBySchoolYearId';
+export const UPDATE_SCHOOL_SEM = 'updateSchoolSem';
+export const DELETE_SCHOOL_SEM = 'deleteSchoolSem';
