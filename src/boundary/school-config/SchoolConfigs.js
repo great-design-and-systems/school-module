@@ -64,99 +64,159 @@ createSchoolProfileChain.addSpec('createdBy', true);
 createSchoolProfileChain.addSpec('updatedBy', true);
 
 const updateSchoolProfileChain = new Chain(chains.UPDATE_SCHOOL_PROFILE, (context, param, next) => {
-    new UpdateSchoolProfile(param.schoolId(), param.inputData(), (err, schoolProfile) => {
-        if (err) {
-            context.set('status', 500);
-            context.set('dto', new GDSDomainDTO('ERROR_' + chains.UPDATE_SCHOOL_PROFILE, err));
-            next();
-        } else {
-            context.set('status', 200);
-            context.set('dto', new GDSDomainDTO(chains.UPDATE_SCHOOL_PROFILE, schoolProfile));
-            next();
-        }
-    });
+	new UpdateSchoolProfile(param.schoolId(), param.inputData(), (err, schoolProfile) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.UPDATE_SCHOOL_PROFILE, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.UPDATE_SCHOOL_PROFILE, schoolProfile));
+			next();
+		}
+	});
 });
 updateSchoolProfileChain.addSpec('inputData', true);
-updateSchoolProfileChain.addSpec('facultyId', true);
+updateSchoolProfileChain.addSpec('schoolId', true);
 
 const getProfileBySchoolIdChain = new Chain(chains.GET_SCHOOL_PROFILE, (context, param, next) => {
-    new GetSchoolProfile(param.schoolId(), (err, schoolProfile) => {
-        if (err) {
-            context.set('status', 500);
-            context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_SCHOOL_PROFILE, err));
-            next();
-        } else {
-            context.set('status', 200);
-            context.set('dto', new GDSDomainDTO(chains.GET_SCHOOL_PROFILE, schoolProfile));
-            next();
-        }
-    });
+	new GetSchoolProfile(param.schoolId(), (err, schoolProfile) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_SCHOOL_PROFILE, err));
+			next();
+		} else {
+			context.set('status', 200);
+			if (schoolProfile) {
+				context.set('dto', new GDSDomainDTO(chains.GET_SCHOOL_PROFILE, schoolProfile));
+			} else {
+				context.set('dto', new GDSDomainDTO(chains.GET_SCHOOL_PROFILE, []));
+			}
+			next();
+		}
+	});
 });
 getProfileBySchoolIdChain.addSpec('schoolId', true);
 
 const deleteSchoolProfileChain = new Chain(chains.DELETE_SCHOOL_PROFILE, (context, param, next) => {
-    new deleteSchoolProfile(param.schoolId(), (err) => {
-        if (err) {
-            context.set('status', 500);
-            context.set('dto', new GDSDomainDTO('ERROR_' + chains.DELETE_SCHOOL_PROFILE, err));
-            next();
-        } else {
-            context.set('status', 200);
-            context.set('dto', new GDSDomainDTO(chains.DELETE_SCHOOL_PROFILE, 'School Profile has been removed.'));
-            next();
-        }
-    });
+	new DeleteSchoolProfile(param.schoolId(), (err) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.DELETE_SCHOOL_PROFILE, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.DELETE_SCHOOL_PROFILE, 'School Profile has been removed.'));
+			next();
+		}
+	});
 });
 deleteSchoolProfileChain.addSpec('schoolId', true);
 
+const createSchoolYearChain = new Chain(chains.CREATE_SCHOOL_YEAR, (context, param, next) => {
+	new CreateSchoolYear({
+		description: param.description(),
+		dateStart: param.dateStart(),
+		dateEnd: param.dateEnd(),
+		schoolId: param.schoolId(),
+		createdBy: param.createdBy(),
+		updatedBy: param.updatedBy()
+	}, (err, schoolYear) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.CREATE_SCHOOL_YEAR, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.CREATE_SCHOOL_YEAR, {
+				id: schoolYear._id
+			}));
+			next();
+		}
+	});
+});
+createSchoolYearChain.addSpec('description', true);
+createSchoolYearChain.addSpec('dateStart', true);
+createSchoolYearChain.addSpec('dateEnd', true);
+createSchoolYearChain.addSpec('schoolId', true);
+createSchoolYearChain.addSpec('createdBy', true);
+createSchoolYearChain.addSpec('updatedBy', true);
+
+const updateSchoolYearChain = new Chain(chains.UPDATE_SCHOOL_YEAR, (context, param, next) => {
+	const updateParam = param.inputData();
+	updateParam.updatedOn = new Date();
+	new UpdateSchoolYear(param.schoolYearId(), updateParam, (err, schoolYear) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.UPDATE_SCHOOL_YEAR, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.UPDATE_SCHOOL_YEAR, schoolYear));
+			next();
+		}
+	});
+});
+updateSchoolYearChain.addSpec('inputData', true);
+updateSchoolYearChain.addSpec('schoolYearId', true);
+
+const getSchoolYearChain = new Chain(chains.GET_SCHOOL_YEAR, (context, param, next) => {
+	new GetSchoolYear(param.schoolYearId(), (err, schoolYear) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_SCHOOL_YEAR, err));
+			next();
+		} else {
+			context.set('status', 200);
+			if (schoolYear) {
+				context.set('dto', new GDSDomainDTO(chains.GET_SCHOOL_YEAR, schoolYear));
+			} else {
+				context.set('dto', new GDSDomainDTO(chains.GET_SCHOOL_YEAR, []));
+			}
+
+			next();
+		}
+	});
+});
+getSchoolYearChain.addSpec('schoolYearId', true);
+
+const getSchoolYearsChain = new Chain(chains.GET_SCHOOL_YEAR_BY_SCHOOL_ID, (context, param, next) => {
+	new GetSchoolYears(param.schoolId(), (err, schoolYear) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_SCHOOL_YEAR_BY_SCHOOL_ID, err));
+			next();
+		} else {
+			context.set('status', 200);
+			if (schoolYear) {
+				context.set('dto', new GDSDomainDTO(chains.GET_SCHOOL_YEAR_BY_SCHOOL_ID, schoolYear));
+			} else {
+				context.set('dto', new GDSDomainDTO(chains.GET_SCHOOL_YEAR_BY_SCHOOL_ID, []));
+			}
+			next();
+		}
+	});
+});
+getSchoolYearsChain.addSpec('schoolId', true);
+
+const deleteSchoolYearChain = new Chain(chains.DELETE_SCHOOL_YEAR, (context, param, next) => {
+	new DeleteSchoolYear(param.schoolYearId(), (err) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.DELETE_SCHOOL_YEAR, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.DELETE_SCHOOL_YEAR, 'School Year has been removed.'));
+			next();
+		}
+	});
+});
+deleteSchoolYearChain.addSpec('schoolYearId', true);
+
 export default class SchoolConfigs {
 
-	deleteSchoolProfile(schoolId, callback) {
-		new DeleteSchoolProfile(schoolId, callback);
-	}
-	createSchoolYear(param, callback) {
-		new CreateSchoolYear({
-			description: param.description,
-			dateStart: param.dateStart,
-			dateEnd: param.dateEnd,
-			schoolId: param.schoolId,
-			createdBy: param.createdBy,
-			updatedBy: param.createdBy
-		}, callback);
-	}
-	updateSchoolYear(schoolYearId, updateParam, callback) {
-		updateParam.updatedOn = new Date();
-		new UpdateSchoolYear(schoolYearId, updateParam, callback);
-	}
-	getSchoolYear(schoolYearId, callback) {
-		new GetSchoolYear(schoolYearId, (err, result) => {
-			if (err) {
-				callback(err);
-			} else {
-				if (result) {
-					callback(null, result);
-				} else {
-					callback(null, []);
-				}
-			}
-		});
-	}
-	getSchoolYears(params, callback) {
-		new GetSchoolYears(params, (err, result) => {
-			if (err) {
-				callback(err);
-			} else {
-				if (result) {
-					callback(null, result);
-				} else {
-					callback(null, []);
-				}
-			}
-		});
-	}
-	deleteSchoolYear(schoolYearId, callback) {
-		new DeleteSchoolYear(schoolYearId, callback);
-	}
+
 	createSchoolSem(param, callback) {
 		new CreateSchoolSem({
 			description: param.description,

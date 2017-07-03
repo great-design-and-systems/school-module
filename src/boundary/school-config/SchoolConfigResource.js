@@ -54,7 +54,7 @@ export default class SchoolConfigResource {
 
         resource.put(Chain.UPDATE_SCHOOL_YEAR, 'school-config/update-school-year/:schoolYearId', (req, res) => {
             ExecuteChain(Chain.UPDATE_SCHOOL_YEAR, {
-                schoschoolYearIdolId: req.params.schoolYearId,
+                schoolYearId: req.params.schoolYearId,
                 inputData: req.body
             }, result => {
                 res.status(result.status()).send(result.dto());
@@ -84,286 +84,225 @@ export default class SchoolConfigResource {
                 res.status(result.status()).send(result.dto());
             });
         });
-        resource.post(API, 'school-config/create-school-sem', (req, res) => {
-            SchoolConfig.createSchoolSem(req.body, (err, result) => {
-                if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).send({
-                        message: 'ok',
-                        result: result._id
-                    });
-                }
+        resource.post(Chain.CREATE_SCHOOL_SEM, 'school-config/create-school-sem', (req, res) => {
+            ExecuteChain(Chain.CREATE_SCHOOL_SEM, {
+                description: req.body.description,
+                dateStart: req.body.dateStart,
+                dateEnd: req.body.dateEnd,
+                schoolYearId: req.body.schoolYearId,
+                createdBy: req.body.createdBy,
+                updatedBy: req.body.createdBy
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.put(API, 'school-config/update-school-sem/:schoolSemId', (req, res) => {
-            SchoolConfig.updateSchoolSem(req.params.schoolSemId, req.body, (err) => {
-                if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).send({
-                        message: 'ok'
-                    });
-                }
+        resource.put(Chain.UPDATE_SCHOOL_SEM, 'school-config/update-school-sem/:schoolSemId', (req, res) => {
+            ExecuteChain(Chain.UPDATE_SCHOOL_SEM, {
+                schoolSemId: req.params.schoolSemId,
+                inputData: req.body
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.get(API, 'school-config/get-school-sem/:schoolSemId', (req, res) => {
-            SchoolConfig.getSchoolSem(req.params.schoolSemId, (err, result) => {
-                if (err) {
-                    res.status(500).send({ message: "Semester not found." });
-                } else {
-                    res.status(200).send(result);
-                }
+        resource.get(Chain.GET_SCHOOL_SEM, 'school-config/get-school-sem/:schoolSemId', (req, res) => {
+            ExecuteChain(Chain.GET_SCHOOL_SEM, {
+                schoolSemId: req.params.schoolSemId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.get(API, 'school-config/get-school-sem-by-school-year/:schoolYearId', (req, res) => {
-            SchoolConfig.getSchoolSems(req.params, (err, result) => {
-                if (err) {
-                    res.status(500).send({ message: "School Sem not found." });
-                } else {
-                    res.status(200).send(result);
-                }
+        resource.get(Chain.GET_SCHOOL_SEM_BY_SCHOOL_YEAR_ID, 'school-config/get-school-sem-by-school-year/:schoolYearId', (req, res) => {
+            ExecuteChain(Chain.GET_SCHOOL_SEM_BY_SCHOOL_YEAR_ID, {
+                schoolYearId: req.params.schoolYearId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.delete(API, 'school-config/delete-school-sem/:schoolSemId', (req, res) => {
-            SchoolConfig.deleteSchoolSem(req.params.schoolSemId, (err) => {
-                if (err) {
-                    res.status(500).send({
-                        message: 'Failed to remove school sem id ' + req.params.schoolSemId + '.'
-                    });
-                } else {
-                    res.status(200).send({ message: 'ok' });
-                }
+        resource.delete(Chain.DELETE_SCHOOL_SEM, 'school-config/delete-school-sem/:schoolSemId', (req, res) => {
+            ExecuteChain(Chain.DELETE_SCHOOL_SEM, {
+                schoolSemId: req.params.schoolSemId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
-        resource.post(API, 'school-config/create-education-level', (req, res) => {
-            SchoolConfig.createEducationLevel(req.body, (err, result) => {
-                if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).send({
-                        message: 'ok',
-                        result: result._id
-                    });
-                }
+        resource.post(Chain.CREATE_EDUCATION_LEVEL, 'school-config/create-education-level', (req, res) => {
+            ExecuteChain(Chain.CREATE_EDUCATION_LEVEL, {
+                name: req.body.name,
+                description: req.body.description,
+                schoolId: req.body.schoolId,
+                createdBy: req.body.createdBy,
+                updatedBy: req.body.createdBy
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.put(API, 'school-config/update-education-level/:educationLevelId', (req, res) => {
-            SchoolConfig.updateEducationLevel(req.params.educationLevelId, req.body, (err) => {
-                if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).send({
-                        message: 'ok'
-                    });
-                }
+        resource.put(Chain.UPDATE_EDUCATION_LEVEL, 'school-config/update-education-level/:educationLevelId', (req, res) => {
+            ExecuteChain(Chain.UPDATE_EDUCATION_LEVEL, {
+                educationLevelId: req.params.educationLevelId,
+                inputData: req.body
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.get(API, 'school-config/get-education-level/:educationLevelId', (req, res) => {
-            SchoolConfig.getEducationLevel(req.params.educationLevelId, (err, result) => {
-                if (err) {
-                    res.status(500).send({ message: "Education Level not found." });
-                } else {
-                    res.status(200).send(result);
-                }
+        resource.get(Chain.GET_EDUCATION_LEVEL, 'school-config/get-education-level/:educationLevelId', (req, res) => {
+            ExecuteChain(Chain.GET_EDUCATION_LEVEL, {
+                educationLevelId: req.params.educationLevelId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.get(API, 'school-config/get-education-level-by-school/:schoolId', (req, res) => {
-            SchoolConfig.getEducationLevels(req.params, (err, result) => {
-                if (err) {
-                    res.status(500).send({ message: "Education Level not found." });
-                } else {
-                    res.status(200).send(result);
-                }
+        resource.get(Chain.GET_EDUCATION_LEVEL_BY_SCHOOL_ID, 'school-config/get-education-level-by-school/:schoolId', (req, res) => {
+            ExecuteChain(Chain.GET_EDUCATION_LEVEL_BY_SCHOOL_ID, {
+                schoolId: req.params.schoolId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.delete(API, 'school-config/delete-education-level/:educationLevelId', (req, res) => {
-            SchoolConfig.deleteEducationLevel(req.params.educationLevelId, (err) => {
-                if (err) {
-                    res.status(500).send({
-                        message: 'Failed to remove education level id ' + req.params.educationLevelId + '.'
-                    });
-                } else {
-                    res.status(200).send({ message: 'ok' });
-                }
+        resource.delete(Chain.DELETE_EDUCATION_LEVEL, 'school-config/delete-education-level/:educationLevelId', (req, res) => {
+            ExecuteChain(Chain.DELETE_EDUCATION_LEVEL, {
+                educationLevelId: req.params.educationLevelId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
-        resource.post(API, 'school-config/create-department', (req, res) => {
-            SchoolConfig.createDepartment(req.body, (err, result) => {
-                if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).send({
-                        message: 'ok',
-                        result: result._id
-                    });
-                }
+        resource.post(Chain.CREATE_DEPARTMENT, 'school-config/create-department', (req, res) => {
+            ExecuteChain(Chain.CREATE_DEPARTMENT, {
+                name: req.body.name,
+                description: req.body.description,
+                schoolId: req.body.schoolId,
+                createdBy: req.body.createdBy,
+                updatedBy: req.body.createdBy
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.put(API, 'school-config/update-department/:departmentId', (req, res) => {
-            SchoolConfig.updateDepartment(req.params.departmentId, req.body, (err) => {
-                if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).send({
-                        message: 'ok'
-                    });
-                }
+        resource.put(Chain.UPDATE_DEPARTMENT, 'school-config/update-department/:departmentId', (req, res) => {
+            ExecuteChain(Chain.UPDATE_DEPARTMENT, {
+                departmentId: req.params.departmentId,
+                inputData: req.body
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.get(API, 'school-config/get-department/:departmentId', (req, res) => {
-            SchoolConfig.getDepartment(req.params.departmentId, (err, result) => {
-                if (err) {
-                    res.status(500).send({ message: "Department not found." });
-                } else {
-                    res.status(200).send(result);
-                }
+        resource.get(Chain.GET_DEPARTMENT, 'school-config/get-department/:departmentId', (req, res) => {
+            ExecuteChain(Chain.GET_DEPARTMENT, {
+                departmentId: req.params.departmentId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.get(API, 'school-config/get-department-by-school/:schoolId', (req, res) => {
-            SchoolConfig.getDepartments(req.params, (err, result) => {
-                if (err) {
-                    res.status(500).send({ message: "Department not found." });
-                } else {
-                    res.status(200).send(result);
-                }
+        resource.get(Chain.GET_DEPARTMENT_BY_SCHOOL_ID, 'school-config/get-department-by-school/:schoolId', (req, res) => {
+            ExecuteChain(Chain.GET_DEPARTMENT_BY_SCHOOL_ID, {
+                schoolId: req.params.schoolId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.delete(API, 'school-config/delete-department/:departmentId', (req, res) => {
-            SchoolConfig.deleteDepartment(req.params.departmentId, (err) => {
-                if (err) {
-                    res.status(500).send({
-                        message: 'Failed to remove department id ' + req.params.departmentId + '.'
-                    });
-                } else {
-                    res.status(200).send({ message: 'ok' });
-                }
+        resource.delete(Chain.DELETE_DEPARTMENT, 'school-config/delete-department/:departmentId', (req, res) => {
+            ExecuteChain(Chain.DELETE_DEPARTMENT, {
+                departmentId: req.params.departmentId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.post(API, 'school-config/create-theme', (req, res) => {
-            SchoolConfig.createTheme(req.body, (err, result) => {
-                if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).send({
-                        message: 'ok',
-                        result: result._id
-                    });
-                }
+        resource.post(Chain.CREATE_THEME, 'school-config/create-theme', (req, res) => {
+            ExecuteChain(Chain.CREATE_THEME, {
+                templateName: req.body.templateName,
+                description: req.body.description,
+                logo: req.body.logo,
+                schoolId: req.body.schoolId,
+                createdBy: req.body.createdBy,
+                updatedBy: req.body.createdBy
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.put(API, 'school-config/update-theme/:themeId', (req, res) => {
-            SchoolConfig.updateTheme(req.params.themeId, req.body, (err) => {
-                if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).send({
-                        message: 'ok'
-                    });
-                }
+        resource.put(Chain.UPDATE_THEME, 'school-config/update-theme/:themeId', (req, res) => {
+            ExecuteChain(Chain.UPDATE_THEME, {
+                themeId: req.params.themeId,
+                inputData: req.body
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.get(API, 'school-config/get-theme/:themeId', (req, res) => {
-            SchoolConfig.getTheme(req.params.themeId, (err, result) => {
-                if (err) {
-                    res.status(500).send({ message: "Theme not found." });
-                } else {
-                    res.status(200).send(result);
-                }
+        resource.get(Chain.GET_THEME, 'school-config/get-theme/:themeId', (req, res) => {
+            ExecuteChain(Chain.GET_THEME, {
+                themeId: req.params.themeId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.get(API, 'school-config/get-theme-by-school/:schoolId', (req, res) => {
-            SchoolConfig.getThemes(req.params, (err, result) => {
-                if (err) {
-                    res.status(500).send({ message: "Theme not found." });
-                } else {
-                    res.status(200).send(result);
-                }
+        resource.get(Chain.GET_THEME_BY_SCHOOL_ID, 'school-config/get-theme-by-school/:schoolId', (req, res) => {
+            ExecuteChain(Chain.GET_THEME_BY_SCHOOL_ID, {
+                schoolId: req.params.schoolId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.delete(API, 'school-config/delete-theme/:themeId', (req, res) => {
-            SchoolConfig.deleteTheme(req.params.themeId, (err) => {
-                if (err) {
-                    res.status(500).send({
-                        message: 'Failed to remove theme id ' + req.params.themeId + '.'
-                    });
-                } else {
-                    res.status(200).send({ message: 'ok' });
-                }
+        resource.delete(Chain.DELETE_THEME, 'school-config/delete-theme/:themeId', (req, res) => {
+            ExecuteChain(Chain.DELETE_THEME, {
+                themeId: req.params.themeId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.post(API, 'school-config/create-code', (req, res) => {
-            SchoolConfig.createCode(req.body, (err, result) => {
-                if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).send({
-                        message: 'ok',
-                        result: result._id
-                    });
-                }
+        resource.post(Chain.CREATE_CODE, 'school-config/create-code', (req, res) => {
+            ExecuteChain(Chain.CREATE_CODE, {
+                codeType: req.body.codeType,
+                codeName: req.body.codeName,
+                codeValue: req.body.codeValue,
+                schoolId: req.body.schoolId,
+                createdBy: req.body.createdBy,
+                updatedBy: req.body.createdBy
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.put(API, 'school-config/update-code/:codeId', (req, res) => {
-            SchoolConfig.updateCode(req.params.codeId, req.body, (err) => {
-                if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).send({
-                        message: 'ok'
-                    });
-                }
+        resource.put(Chain.UPDATE_CODE, 'school-config/update-code/:codeId', (req, res) => {
+            ExecuteChain(Chain.UPDATE_CODE, {
+                codeId: req.params.codeId,
+                inputData: req.body
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.get(API, 'school-config/get-codes/:codeType/:schoolId', (req, res) => {
-            SchoolConfig.getCodes(req.params, (err, result) => {
-                if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).send(result);
-                }
+        resource.get(Chain.GET_CODES, 'school-config/get-codes/:codeType/:schoolId', (req, res) => {
+            ExecuteChain(Chain.GET_CODES, req.params, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.get(API, 'school-config/get-code/:schoolId/:codeType/:codeName', (req, res) => {
-            SchoolConfig.getCode(req.params, (err, result) => {
-                if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).send(result);
-                }
+        resource.get(Chain.GET_CODE, 'school-config/get-code/:schoolId/:codeType/:codeName', (req, res) => {
+            ExecuteChain(Chain.GET_CODE, req.params, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
-        resource.delete(API, 'school-config/delete-code/:codeId', (req, res) => {
-            SchoolConfig.deleteCode(req.params.codeId, (err) => {
-                if (err) {
-                    res.status(500).send({
-                        message: 'Failed to remove code id ' + req.params.codeId + '.'
-                    });
-                } else {
-                    res.status(200).send({ message: 'ok' });
-                }
+        resource.delete(Chain.DELETE_CODE, 'school-config/delete-code/:codeId', (req, res) => {
+            ExecuteChain(Chain.DELETE_CODE, {
+                codeId: req.params.codeId
+            }, result => {
+                res.status(result.status()).send(result.dto());
             });
         });
 
