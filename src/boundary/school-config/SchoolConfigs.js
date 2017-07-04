@@ -214,220 +214,501 @@ const deleteSchoolYearChain = new Chain(chains.DELETE_SCHOOL_YEAR, (context, par
 });
 deleteSchoolYearChain.addSpec('schoolYearId', true);
 
-export default class SchoolConfigs {
+const createSchoolSemChain = new Chain(chains.CREATE_SCHOOL_SEM, (context, param, next) => {
+	new CreateSchoolSem({
+		description: param.description(),
+		dateStart: param.dateStart(),
+		dateEnd: param.dateEnd(),
+		schoolYearId: param.schoolYearId,
+		createdBy: param.createdBy(),
+		updatedBy: param.updatedBy()
+	}, (err, schoolSem) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.CREATE_SCHOOL_SEM, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.CREATE_SCHOOL_SEM, {
+				id: schoolSem._id
+			}));
+			next();
+		}
+	});
+});
+createSchoolSemChain.addSpec('description', true);
+createSchoolSemChain.addSpec('dateStart', true);
+createSchoolSemChain.addSpec('dateEnd', true);
+createSchoolSemChain.addSpec('schoolYearId', true);
+createSchoolSemChain.addSpec('createdBy', true);
+createSchoolSemChain.addSpec('updatedBy', true);
 
+const updateSchoolSemChain = new Chain(chains.UPDATE_SCHOOL_SEM, (context, param, next) => {
+	const updateParam = param.inputData();
+	updateParam.updatedOn = new Date();
+	new UpdateSchoolSem(param.schoolSemId(), updateParam, (err, schoolSem) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.UPDATE_SCHOOL_SEM, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.UPDATE_SCHOOL_SEM, schoolSem));
+			next();
+		}
+	});
+});
+updateSchoolSemChain.addSpec('inputData', true);
+updateSchoolSemChain.addSpec('schoolSemId', true);
 
-	createSchoolSem(param, callback) {
-		new CreateSchoolSem({
-			description: param.description,
-			dateStart: param.dateStart,
-			dateEnd: param.dateEnd,
-			schoolYearId: param.schoolYearId,
-			createdBy: param.createdBy,
-			updatedBy: param.createdBy
-		}, callback);
-	}
-	updateSchoolSem(schoolSemId, updateParam, callback) {
-		updateParam.updatedOn = new Date();
-		new UpdateSchoolSem(schoolSemId, updateParam, callback);
-	}
-	getSchoolSem(schoolSemId, callback) {
-		new GetSchoolSem(schoolSemId, (err, result) => {
-			if (err) {
-				callback(err);
+const getSchoolSemChain = new Chain(chains.GET_SCHOOL_SEM, (context, param, next) => {
+	new GetSchoolSem(param.schoolSemId(), (err, schoolSem) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_SCHOOL_SEM, err));
+			next();
+		} else {
+			context.set('status', 200);
+			if (schoolSem) {
+				context.set('dto', new GDSDomainDTO(chains.GET_SCHOOL_SEM, schoolSem));
 			} else {
-				if (result) {
-					callback(null, result);
-				} else {
-					callback(null, []);
-				}
+				context.set('dto', new GDSDomainDTO(chains.GET_SCHOOL_SEM, []));
 			}
-		});
-	}
-	getSchoolSems(params, callback) {
-		new GetSchoolSems(params, (err, result) => {
-			if (err) {
-				callback(err);
+
+			next();
+		}
+	});
+});
+getSchoolSemChain.addSpec('schoolSemId', true);
+
+const getSchoolSemsChain = new Chain(chains.GET_SCHOOL_SEM_BY_SCHOOL_YEAR_ID, (context, param, next) => {
+	new GetSchoolSems(param.schoolSemId(), (err, schoolSem) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_SCHOOL_SEM_BY_SCHOOL_YEAR_ID, err));
+			next();
+		} else {
+			context.set('status', 200);
+			if (schoolSem) {
+				context.set('dto', new GDSDomainDTO(chains.GET_SCHOOL_SEM_BY_SCHOOL_YEAR_ID, schoolSem));
 			} else {
-				if (result) {
-					callback(null, result);
-				} else {
-					callback(null, []);
-				}
+				context.set('dto', new GDSDomainDTO(chains.GET_SCHOOL_SEM_BY_SCHOOL_YEAR_ID, []));
 			}
-		});
-	}
-	deleteSchoolSem(schoolSemId, callback) {
-		new DeleteSchoolSem(schoolSemId, callback);
-	}
-	createEducationLevel(param, callback) {
-		new CreateEducationLevel({
-			name: param.name,
-			description: param.description,
-			schoolId: param.schoolId,
-			createdBy: param.createdBy,
-			updatedBy: param.createdBy
-		}, callback);
-	}
-	updateEducationLevel(educationLevelId, updateParam, callback) {
-		updateParam.updatedOn = new Date();
-		new UpdateEducationLevel(educationLevelId, updateParam, callback);
-	}
-	getEducationLevel(educationLevelId, callback) {
-		new GetEducationLevel(educationLevelId, (err, result) => {
-			if (err) {
-				callback(err);
+			next();
+		}
+	});
+});
+getSchoolSemsChain.addSpec('schoolSemId', true);
+
+const deleteSchoolSemChain = new Chain(chains.DELETE_SCHOOL_SEM, (context, param, next) => {
+	new DeleteSchoolSem(param.schoolSemId(), (err) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.DELETE_SCHOOL_SEM, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.DELETE_SCHOOL_SEM, 'School Sem has been removed.'));
+			next();
+		}
+	});
+});
+deleteSchoolSemChain.addSpec('schoolSemId', true);
+
+const createEducationLevelChain = new Chain(chains.CREATE_EDUCATION_LEVEL, (context, param, next) => {
+	new CreateEducationLevel({
+		name: param.name(),
+		description: param.description(),
+		schoolId: param.schoolId(),
+		createdBy: param.createdBy(),
+		updatedBy: param.updatedBy()
+	}, (err, educationLevel) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.CREATE_EDUCATION_LEVEL, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.CREATE_EDUCATION_LEVEL, {
+				id: educationLevel._id
+			}));
+			next();
+		}
+	});
+});
+createEducationLevelChain.addSpec('name', true);
+createEducationLevelChain.addSpec('description', true);
+createEducationLevelChain.addSpec('schoolId', true);
+createEducationLevelChain.addSpec('createdBy', true);
+createEducationLevelChain.addSpec('updatedBy', true);
+
+const updateEducationLevelChain = new Chain(chains.UPDATE_EDUCATION_LEVEL, (context, param, next) => {
+	const updateParam = param.inputData();
+	updateParam.updatedOn = new Date();
+	new UpdateEducationLevel(param.educationLevelId(), updateParam, (err, educationLevel) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.UPDATE_EDUCATION_LEVEL, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.UPDATE_EDUCATION_LEVEL, educationLevel));
+			next();
+		}
+	});
+});
+updateEducationLevelChain.addSpec('inputData', true);
+updateEducationLevelChain.addSpec('educationLevelId', true);
+
+const getEducationLevelChain = new Chain(chains.GET_EDUCATION_LEVEL, (context, param, next) => {
+	new GetEducationLevel(param.educationLevelId(), (err, educationLevel) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_EDUCATION_LEVEL, err));
+			next();
+		} else {
+			context.set('status', 200);
+			if (educationLevel) {
+				context.set('dto', new GDSDomainDTO(chains.GET_EDUCATION_LEVEL, educationLevel));
 			} else {
-				if (result) {
-					callback(null, result);
-				} else {
-					callback(null, []);
-				}
+				context.set('dto', new GDSDomainDTO(chains.GET_EDUCATION_LEVEL, []));
 			}
-		});
-	}
-	getEducationLevels(params, callback) {
-		new GetEducationLevels(params, (err, result) => {
-			if (err) {
-				callback(err);
+
+			next();
+		}
+	});
+});
+getEducationLevelChain.addSpec('educationLevelId', true);
+
+const getEducationLevelsChain = new Chain(chains.GET_EDUCATION_LEVEL_BY_SCHOOL_ID, (context, param, next) => {
+	new GetEducationLevels(param.educationLevelId(), (err, educationLevel) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_EDUCATION_LEVEL_BY_SCHOOL_ID, err));
+			next();
+		} else {
+			context.set('status', 200);
+			if (educationLevel) {
+				context.set('dto', new GDSDomainDTO(chains.GET_EDUCATION_LEVEL_BY_SCHOOL_ID, educationLevel));
 			} else {
-				if (result) {
-					callback(null, result);
-				} else {
-					callback(null, []);
-				}
+				context.set('dto', new GDSDomainDTO(chains.GET_EDUCATION_LEVEL_BY_SCHOOL_ID, []));
 			}
-		});
-	}
-	deleteEducationLevel(educationLevelId, callback) {
-		new DeleteEducationLevel(educationLevelId, callback);
-	}
-	createDepartment(param, callback) {
-		new CreateDepartment({
-			name: param.name,
-			description: param.description,
-			schoolId: param.schoolId,
-			createdBy: param.createdBy,
-			updatedBy: param.createdBy
-		}, callback);
-	}
-	updateDepartment(departmentId, updateParam, callback) {
-		updateParam.updatedOn = new Date();
-		new UpdateDepartment(departmentId, updateParam, callback);
-	}
-	getDepartment(departmentId, callback) {
-		new GetDepartment(departmentId, (err, result) => {
-			if (err) {
-				callback(err);
+			next();
+		}
+	});
+});
+getEducationLevelsChain.addSpec('educationLevelId', true);
+
+const deleteEducationLevelChain = new Chain(chains.DELETE_EDUCATION_LEVEL, (context, param, next) => {
+	new DeleteEducationLevel(param.educationLevelId(), (err) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.DELETE_EDUCATION_LEVEL, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.DELETE_EDUCATION_LEVEL, 'Education Level has been removed.'));
+			next();
+		}
+	});
+});
+deleteEducationLevelChain.addSpec('educationLevelId', true);
+
+const createDepartmentChain = new Chain(chains.CREATE_DEPARTMENT, (context, param, next) => {
+	new createDepartment({
+		name: param.name(),
+		description: param.description(),
+		schoolId: param.schoolId(),
+		createdBy: param.createdBy(),
+		updatedBy: param.updatedBy()
+	}, (err, department) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.CREATE_DEPARTMENT, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.CREATE_DEPARTMENT, {
+				id: department._id
+			}));
+			next();
+		}
+	});
+});
+createDepartmentChain.addSpec('name', true);
+createDepartmentChain.addSpec('description', true);
+createDepartmentChain.addSpec('schoolId', true);
+createDepartmentChain.addSpec('createdBy', true);
+createDepartmentChain.addSpec('updatedBy', true);
+
+const updateDepartmentChain = new Chain(chains.UPDATE_DEPARTMENT, (context, param, next) => {
+	const updateParam = param.inputData();
+	updateParam.updatedOn = new Date();
+	new UpdateDepartment(param.departmentId(), updateParam, (err, department) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.UPDATE_DEPARTMENT, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.UPDATE_DEPARTMENT, department));
+			next();
+		}
+	});
+});
+updateDepartmentChain.addSpec('inputData', true);
+updateDepartmentChain.addSpec('departmentId', true);
+
+const getDepartmentChain = new Chain(chains.GET_DEPARTMENT, (context, param, next) => {
+	new GetDepartment(param.departmentId(), (err, department) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_DEPARTMENT, err));
+			next();
+		} else {
+			context.set('status', 200);
+			if (department) {
+				context.set('dto', new GDSDomainDTO(chains.GET_DEPARTMENT, department));
 			} else {
-				if (result) {
-					callback(null, result);
-				} else {
-					callback(null, []);
-				}
+				context.set('dto', new GDSDomainDTO(chains.GET_DEPARTMENT, []));
 			}
-		});
-	}
-	getDepartments(params, callback) {
-		new GetDepartments(params, (err, result) => {
-			if (err) {
-				callback(err);
+
+			next();
+		}
+	});
+});
+getDepartmentChain.addSpec('departmentId', true);
+
+const getDepartmentsChain = new Chain(chains.GET_DEPARTMENT_BY_SCHOOL_ID, (context, param, next) => {
+	new GetDepartments(param.departmentId(), (err, department) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_DEPARTMENT_BY_SCHOOL_ID, err));
+			next();
+		} else {
+			context.set('status', 200);
+			if (department) {
+				context.set('dto', new GDSDomainDTO(chains.GET_DEPARTMENT_BY_SCHOOL_ID, department));
 			} else {
-				if (result) {
-					callback(null, result);
-				} else {
-					callback(null, []);
-				}
+				context.set('dto', new GDSDomainDTO(chains.GET_DEPARTMENT_BY_SCHOOL_ID, []));
 			}
-		});
-	}
-	deleteDepartment(departmentId, callback) {
-		new DeleteDepartment(departmentId, callback);
-	}
-	createTheme(param, callback) {
-		new CreateTheme({
-			templateName: param.templateName,
-			description: param.description,
-			logo: param.logo,
-			schoolId: param.schoolId,
-			createdBy: param.createdBy,
-			updatedBy: param.createdBy
-		}, callback);
-	}
-	updateTheme(themeId, updateParam, callback) {
-		updateParam.updatedOn = new Date();
-		new UpdateTheme(themeId, updateParam, callback);
-	}
-	getTheme(themeId, callback) {
-		new GetTheme(themeId, (err, result) => {
-			if (err) {
-				callback(err);
+			next();
+		}
+	});
+});
+getDepartmentsChain.addSpec('departmentId', true);
+
+const deleteDepartmentChain = new Chain(chains.DELETE_DEPARTMENT, (context, param, next) => {
+	new DeleteDepartment(param.departmentId(), (err) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.DELETE_DEPARTMENT, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.DELETE_DEPARTMENT, 'Department has been removed.'));
+			next();
+		}
+	});
+});
+deleteDepartmentChain.addSpec('departmentId', true);
+
+const createThemeChain = new Chain(chains.CREATE_THEME, (context, param, next) => {
+	new CreateTheme({
+		templateName: param.templateName(),
+		description: param.description(),
+		logo: param.logo(),
+		schoolId: param.schoolId(),
+		createdBy: param.createdBy(),
+		updatedBy: param.updatedBy()
+	}, (err, theme) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.CREATE_THEME, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.CREATE_THEME, {
+				id: theme._id
+			}));
+			next();
+		}
+	});
+});
+createThemeChain.addSpec('templateName', true);
+createThemeChain.addSpec('description', true);
+createThemeChain.addSpec('logo', true);
+createThemeChain.addSpec('schoolId', true);
+createThemeChain.addSpec('createdBy', true);
+createThemeChain.addSpec('updatedBy', true);
+
+const updateThemeChain = new Chain(chains.UPDATE_THEME, (context, param, next) => {
+	const updateParam = param.inputData();
+	updateParam.updatedOn = new Date();
+	new UpdateTheme(param.themeId(), updateParam, (err, theme) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.UPDATE_THEME, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.UPDATE_THEME, theme));
+			next();
+		}
+	});
+});
+updateThemeChain.addSpec('inputData', true);
+updateThemeChain.addSpec('themeId', true);
+
+const getThemeChain = new Chain(chains.GET_THEME, (context, param, next) => {
+	new getTheme(param.themeId(), (err, theme) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_THEME, err));
+			next();
+		} else {
+			context.set('status', 200);
+			if (theme) {
+				context.set('dto', new GDSDomainDTO(chains.GET_THEME, theme));
 			} else {
-				if (result) {
-					callback(null, result);
-				} else {
-					callback(null, []);
-				}
+				context.set('dto', new GDSDomainDTO(chains.GET_THEME, []));
 			}
-		});
-	}
-	getThemes(params, callback) {
-		new GetThemes(params, (err, result) => {
-			if (err) {
-				callback(err);
+
+			next();
+		}
+	});
+});
+getThemeChain.addSpec('themeId', true);
+
+const getThemesChain = new Chain(chains.GET_THEME_BY_SCHOOL_ID, (context, param, next) => {
+	new GetThemes(param.themeId(), (err, theme) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_THEME_BY_SCHOOL_ID, err));
+			next();
+		} else {
+			context.set('status', 200);
+			if (theme) {
+				context.set('dto', new GDSDomainDTO(chains.GET_THEME_BY_SCHOOL_ID, theme));
 			} else {
-				if (result) {
-					callback(null, result);
-				} else {
-					callback(null, []);
-				}
+				context.set('dto', new GDSDomainDTO(chains.GET_THEME_BY_SCHOOL_ID, []));
 			}
-		});
-	}
-	deleteTheme(themeId, callback) {
-		new DeleteTheme(themeId, callback);
-	}
-	createCode(param, callback) {
-		new CreateCode({
-			codeType: param.codeType,
-			codeName: param.codeName,
-			codeValue: param.codeValue,
-			schoolId: param.schoolId,
-			createdBy: param.createdBy,
-			updatedBy: param.createdBy
-		}, callback);
-	}
-	updateCode(codeId, updateParam, callback) {
-		updateParam.updatedOn = new Date();
-		new UpdateCode(codeId, updateParam, callback);
-	}
-	getCodes(params, callback) {
-		new GetCodes(params, (err, result) => {
-			if (err) {
-				callback(err);
+			next();
+		}
+	});
+});
+getThemesChain.addSpec('themeId', true);
+
+const deleteThemeChain = new Chain(chains.DELETE_THEME, (context, param, next) => {
+	new DeleteTheme(param.themeId(), (err) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.DELETE_THEME, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.DELETE_THEME, 'Theme has been removed.'));
+			next();
+		}
+	});
+});
+deleteThemeChain.addSpec('themeId', true);
+
+const createCodeChain = new Chain(chains.CREATE_CODE, (context, param, next) => {
+	new CreateCode({
+		codeType: param.codeType(),
+		codeName: param.codeName(),
+		codeValue: param.codeValue(),
+		schoolId: param.schoolId(),
+		createdBy: param.createdBy(),
+		updatedBy: param.updatedBy()
+	}, (err, code) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.CREATE_CODE, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.CREATE_CODE, {
+				id: code._id
+			}));
+			next();
+		}
+	});
+});
+createCodeChain.addSpec('codeType', true);
+createCodeChain.addSpec('codeName', true);
+createCodeChain.addSpec('codeValue', true);
+createCodeChain.addSpec('schoolId', true);
+createCodeChain.addSpec('createdBy', true);
+createCodeChain.addSpec('updatedBy', true);
+
+const updateCodeChain = new Chain(chains.UPDATE_CODE, (context, param, next) => {
+	const updateParam = param.inputData();
+	updateParam.updatedOn = new Date();
+	new UpdateCode(param.codeId(), updateParam, (err, code) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.UPDATE_CODE, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.UPDATE_CODE, code));
+			next();
+		}
+	});
+});
+updateCodeChain.addSpec('inputData', true);
+updateCodeChain.addSpec('codeId', true);
+
+const getCodeChain = new Chain(chains.GET_CODE, (context, param, next) => {
+	new GetCode(param, (err, code) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_CODE, err));
+			next();
+		} else {
+			context.set('status', 200);
+			if (code) {
+				context.set('dto', new GDSDomainDTO(chains.GET_CODE, code));
 			} else {
-				if (result) {
-					callback(null, result);
-				} else {
-					callback(null, []);
-				}
+				context.set('dto', new GDSDomainDTO(chains.GET_CODE, []));
 			}
-		});
-	}
-	getCode(params, callback) {
-		new GetCode(params, (err, result) => {
-			if (err) {
-				callback(err);
+
+			next();
+		}
+	});
+});
+
+const getCodesChain = new Chain(chains.GET_CODES, (context, param, next) => {
+	new GetCodes(param, (err, code) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.GET_CODES, err));
+			next();
+		} else {
+			context.set('status', 200);
+			if (code) {
+				context.set('dto', new GDSDomainDTO(chains.GET_CODES, code));
 			} else {
-				if (result) {
-					callback(null, result);
-				} else {
-					callback(null, []);
-				}
+				context.set('dto', new GDSDomainDTO(chains.GET_CODES, []));
 			}
-		});
-	}
-	deleteCode(codeId, callback) {
-		new DeleteCode(codeId, callback);
-	}
-}
+			next();
+		}
+	});
+});
+
+const deleteCodeChain = new Chain(chains.DELETE_CODE, (context, param, next) => {
+	new DeleteCode(param.codeId(), (err) => {
+		if (err) {
+			context.set('status', 500);
+			context.set('dto', new GDSDomainDTO('ERROR_' + chains.DELETE_CODE, err));
+			next();
+		} else {
+			context.set('status', 200);
+			context.set('dto', new GDSDomainDTO(chains.DELETE_CODE, 'Code has been removed.'));
+			next();
+		}
+	});
+});
+deleteCodeChain.addSpec('codeId', true);
