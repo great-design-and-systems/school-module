@@ -1,13 +1,16 @@
 import { ExpressApp, GDSDomainResource } from 'gds-stack';
 import { FacultyChains, FacultyResource } from './faculty/';
 import { StudentChains, StudentResource } from './student/';
+import { SchoolConfigChains, SchoolConfigResource } from './school-config/';
 
 const resource = new GDSDomainResource(ExpressApp, 'api');
 new FacultyResource(resource);
 new StudentResource(resource);
+new SchoolConfigResource(resource);
 module.exports = {
     FacultyChains,
     StudentChains,
+    SchoolConfigChains,
     SchoolResource: resource
 };
 
