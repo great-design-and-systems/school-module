@@ -3,7 +3,7 @@ node_modules
 public
 .tmp
 .idea
-.log
+*.log
 docs
 .env
 npm-debug.log
