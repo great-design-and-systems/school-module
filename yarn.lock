@@ -1062,6 +1062,10 @@ event-stream@~3.3.0:
     stream-combiner "~0.0.4"
     through "~2.3.1"
 
+eventemitter3@1.x.x:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-1.2.0.tgz#1c86991d816ad1e504750e73874224ecf3bec508"
+
 exit@0.1.2, exit@0.1.x:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/exit/-/exit-0.1.2.tgz#0632638f8d877cc82107d30a0fff1a17cba1cd0c"
@@ -1157,9 +1161,17 @@ finalhandler@~1.0.3:
     statuses "~1.3.1"
     unpipe "~1.0.0"
 
-fluid-chains@^0.4.0, fluid-chains@^0.4.2:
+fluid-chains@^0.4.0:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/fluid-chains/-/fluid-chains-0.4.2.tgz#27bb2b921c197f8b4fb4b281c93f16dd9089e7f8"
+  dependencies:
+    babel-polyfill "^6.23.0"
+    lodash "^4.17.4"
+    object-sizeof "^1.2.0"
+
+fluid-chains@^0.5.8, fluid-chains@^0.5.9:
+  version "0.5.9"
+  resolved "https://registry.yarnpkg.com/fluid-chains/-/fluid-chains-0.5.9.tgz#42ddb7f1cae7b95b7748d38bb1683b6fad84e04f"
   dependencies:
     babel-polyfill "^6.23.0"
     lodash "^4.17.4"
@@ -1297,9 +1309,9 @@ gds-config@latest:
     nodemon "^1.11.0"
     restler "3.4.0"
 
-gds-stack@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/gds-stack/-/gds-stack-0.1.2.tgz#a46e47dc5d776468550259a80927adcbe388ac80"
+gds-stack@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/gds-stack/-/gds-stack-0.1.7.tgz#91c9e1aca228ffa03f313006e3f4191b5c31d08b"
   dependencies:
     batchflow "^0.4.0"
     body-parser "^1.17.2"
@@ -1307,7 +1319,8 @@ gds-stack@^0.1.2:
     connect-multiparty "^2.0.0"
     cookie-parser "^1.4.3"
     express "^4.15.3"
-    fluid-chains "^0.4.2"
+    fluid-chains "^0.5.8"
+    http-proxy "^1.16.2"
     lodash "^4.17.4"
     log4js "^1.1.1"
     mongoose "^4.11.0"
@@ -1479,6 +1492,13 @@ http-errors@~1.6.1:
     inherits "2.0.3"
     setprototypeof "1.0.3"
     statuses ">= 1.3.1 < 2"
+
+http-proxy@^1.16.2:
+  version "1.16.2"
+  resolved "https://registry.yarnpkg.com/http-proxy/-/http-proxy-1.16.2.tgz#06dff292952bf64dbe8471fa9df73066d4f37742"
+  dependencies:
+    eventemitter3 "1.x.x"
+    requires-port "1.x.x"
 
 http-signature@~1.1.0:
   version "1.1.1"
@@ -2599,6 +2619,10 @@ require_optional@~1.0.0:
   dependencies:
     resolve-from "^2.0.0"
     semver "^5.1.0"
+
+requires-port@1.x.x:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
 
 resolve-from@^2.0.0:
   version "2.0.0"
